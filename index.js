@@ -5,6 +5,10 @@ var path = require('path');
 // vendor
 var resv = require('resolve');
 
+function getMain(packageJson) {
+    return packageJson.module || packageJson['jsnext:main'] || packageJson.main;
+}
+
 // given a path, create an array of node_module paths for it
 // borrowed from substack/resolve
 function nodeModulesPaths (start, cb) {
@@ -44,7 +48,7 @@ function find_shims_in_package(pkgJson, cur_path, shims, browser) {
     // if browser mapping is a string
     // then it just replaces the main entry point
     if (typeof replacements === 'string') {
-        var key = path.resolve(cur_path, info.main || 'index.js');
+        var key = path.resolve(cur_path, getMain(info) || 'index.js');
         shims[key] = path.resolve(cur_path, replacements);
         return;
     }
@@ -152,6 +156,8 @@ function build_resolve_opts(opts, base) {
     opts.basedir = base;
     opts.packageFilter = function (info, pkgdir) {
         if (packageFilter) info = packageFilter(info, pkgdir);
+
+        info.main = getMain(info);
 
         var replacements = getReplacements(info, browser);
 
