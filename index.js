@@ -6,7 +6,7 @@ var path = require('path');
 var resv = require('resolve');
 
 function getMain(packageJson) {
-    return packageJson.module || packageJson['jsnext:main'] || packageJson.main;
+    return packageJson.module || packageJson.main;
 }
 
 // given a path, create an array of node_module paths for it
